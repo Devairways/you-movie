@@ -1,30 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/interfaces/user.interface';
+import {
+  SingleUserResponse,
+  User,
+  UserArrayResponse,
+} from 'src/interfaces/user.interface';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  async findAll(): Promise<User[]> {
-    return await this.userModel.find();
+  async findAll(): Promise<UserArrayResponse> {
+    const response = await this.userModel.find();
+    return { users: response };
   }
 
-  async findOne(id: string): Promise<User> {
-    return await this.userModel.findOne({ _id: id });
+  async findOne(id: string): Promise<SingleUserResponse> {
+    const response = await this.userModel.findOne({ _id: id });
+    return { user: response };
   }
 
-  async create(item: User): Promise<User> {
+  async create(item: User): Promise<SingleUserResponse> {
     const newItem = new this.userModel(item);
-    return await newItem.save();
+    const response = await newItem.save();
+    return { user: response };
   }
 
-  async delete(id: string): Promise<User> {
-    return await this.userModel.findByIdAndRemove(id);
+  async delete(id: string): Promise<SingleUserResponse> {
+    const response = await this.userModel.findByIdAndRemove(id);
+    return { user: response };
   }
 
-  async update(id: string, item: User): Promise<User> {
-    return await this.userModel.findByIdAndUpdate(id, item, { new: true });
+  async update(id: string, item: User): Promise<SingleUserResponse> {
+    const response = await this.userModel.findByIdAndUpdate(id, item, {
+      new: true,
+    });
+    return { user: response };
   }
 }

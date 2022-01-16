@@ -4,9 +4,14 @@ import config from '../config/keys';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UploadModule } from './upload/upload.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [UploadModule, MongooseModule.forRoot(config.mongoDbUri)],
+  imports: [
+    UserModule,
+    UploadModule,
+    MongooseModule.forRoot(config.mongoDbUri),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
