@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import config from '../config/keys';
+import config from '../config/keys.dev';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
-
+console.log();
 @Module({
   imports: [
     UserModule,

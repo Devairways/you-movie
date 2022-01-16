@@ -1,0 +1,17 @@
+version: "3.4"
+
+services:
+  you-movie:
+    image: you-movie
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - you-movie.mongo.database
+    ports:
+      - 3000:3000
+
+  you-movie.mongo.database:
+    image: mongo:4.4
+    ports:
+      - 27017:27017
