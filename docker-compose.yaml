@@ -4,7 +4,6 @@ services:
   you-movie:
     image: you-movie
     build:
-      context: .
       dockerfile: Dockerfile
     depends_on:
       - you-movie.mongo.database
@@ -13,5 +12,6 @@ services:
 
   you-movie.mongo.database:
     image: mongo:4.4
+    restart: always
     ports:
       - 27017:27017

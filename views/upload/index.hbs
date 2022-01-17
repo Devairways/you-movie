@@ -1,10 +1,137 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>App</title>
-  </head>
-  <body>
-    {{ message }}
-  </body>
+
+<head>
+  <meta charset='utf-8' />
+  <title>App</title>
+  <script src='https://code.jquery.com/jquery-3.2.1.js' integrity='sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE='
+    crossorigin='anonymous'></script>
+  <link rel='stylesheet' media='screen' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' />
+  <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+
+</head>
+
+<body>
+  <div class='container'>
+    <div class='row'>
+      <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+
+        <form id="form" onsubmit="return onFormSubmit()">
+          <legend>Video upload formulier</legend>
+          <div class="alert" id="alert" role="alert" hidden="true">
+          </div>
+
+          <div class='form-group'>
+            <label for='name'>Naam</label>
+            <input type='text' class='form-control' name='name' id='name' placeholder='Volledige naam' required />
+          </div>
+
+          <div class='form-group'>
+            <label for='email'>Email</label>
+            <input type='text' class='form-control' name='email' id='email' placeholder='Email' required />
+          </div>
+
+          <div class='form-group'>
+            <label for='age'>Leeftijd</label>
+            <input type='number' class='form-control' name='age' id='age' required />
+          </div>
+
+          <div class='form-group'>
+            <label for='file'>Upload video</label>
+            <input type='file' class='form-control' name='file' id='file' accept="video/*" required />
+          </div>
+
+
+          <button type='button' onclick="onFormSubmit()" class='btn btn-primary'>Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    const formBlock = document.querySelector('#form');
+    const alertBlock = document.querySelector('#alert');
+    const nameInput = document.querySelector('#name');
+    const emailInput = document.querySelector('#email');
+    const uploadInput = document.querySelector('#file');
+    const ageInput = document.querySelector('#age');
+
+    function checkValidity() {
+      switch (true) {
+        case !nameInput.checkValidity():
+          return false;
+        case !ageInput.checkValidity():
+          return false;
+        case !emailInput.checkValidity():
+          return false;
+        case !uploadInput.checkValidity():
+          return false;
+        default:
+          return true;
+      }
+    }
+
+    function showAlertBlock(succes, text = '') {
+      alertBlock.removeAttribute('hidden');
+      if (succes) {
+        alertBlock.classList.remove('alert-danger');
+        alertBlock.classList.add('alert-success');
+        alertBlock.innerText = text ? text : 'De video is succesvol geupload';
+        return;
+      }
+      alertBlock.classList.remove('alert-success');
+      alertBlock.classList.add('alert-danger');
+      alertBlock.innerText = text ? text : 'Er is iets misgegaan';
+    }
+
+    async function createUser() {
+      const response = await fetch('/user', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: nameInput.value,
+          age: ageInput.value,
+          email: emailInput.value,
+        }),
+      });
+      if (response.ok) {
+        return response;
+      }
+      return null;
+    }
+
+    async function uploadVideo() {
+      const formData = new FormData();
+      formData.append(uploadInput.files[0].name, uploadInput.files[0]);
+
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+      if (response.ok) {
+        return response;
+      }
+      return null;
+    }
+
+    async function onFormSubmit() {
+      if (!checkValidity()) {
+        showAlertBlock(false, "Vul a.u.b. alles in");
+        return;
+      }
+      const userRes = await createUser();
+      if (!userRes) return showAlertBlock(false);
+
+      const uploadRes = await uploadVideo();
+      if (!uploadRes) return showAlertBlock(false);
+
+      formBlock.reset();
+      showAlertBlock(true);
+    }
+
+
+  </script>
+</body>
+
 </html>

@@ -1,14 +1,15 @@
 FROM node:12.14-alpine
 
-WORKDIR /usr/src/you-movie
+WORKDIR /usr/src/app
 
-COPY package.json /usr/src/you-movie/package.json
+COPY package.json /usr/src/app/package.json
 
-RUN npm install --silent
+RUN npm install
 
-COPY . /usr/src/you-movie
+COPY . /usr/src/app
 #RUN npm run test
 
 EXPOSE 3000
 
-CMD npm run start
+# FIXME; improve by separating layers into build and publish for smaller docker image
+CMD [ "npm", "run", "start" ]
